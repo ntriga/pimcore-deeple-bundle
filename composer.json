@@ -1,0 +1,44 @@
+{
+    "name": "ntriga/pimcore-deepl",
+    "version": "11.0.1",
+    "description": "Use Deepl in your Pimcore project to translate documents and objects.",
+    "keywords": [
+        "ntriga",
+        "pimcore",
+        "deepl"
+    ],
+    "homepage": "https://github.com/ntriga/pimcore-deepl",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joey Daems",
+            "email": "joey@ntriga.agency",
+            "role": "Developer"
+        },
+        {
+            "name": "Vincent Bibauw",
+            "email": "vincent@ntriga.agency",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "deeplcom/deepl-php": "^1.8",
+        "pimcore/pimcore": "^11.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ntriga\\PimcoreDeepl\\": "src"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

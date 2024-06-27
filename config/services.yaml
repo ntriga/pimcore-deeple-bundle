@@ -1,0 +1,58 @@
+parameters:
+    deepl_key: '%env(DEEPL_API_KEY)%'
+    deepl_glossary_prefix: 'pimcore-deepl-prefix'
+    deepl_source_lang: 'nl'
+    deepl_target_langs:
+        - 'fr'
+
+    deepl_glossary:
+        "default string":
+            fr: "wanted translation"
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+
+    # ---------------------------------------------------------
+    # Commands
+    # ---------------------------------------------------------
+    Ntriga\PimcoreDeepl\Commands\:
+        resource: '../src/Commands/*'
+        tags: [ 'console.command' ]
+
+    # ---------------------------------------------------------
+    # Packages
+    # ---------------------------------------------------------
+    DeepL\Translator:
+        arguments:
+            $authKey: '%deepl_key%'
+
+    # ---------------------------------------------------------
+    # Actions
+    # ---------------------------------------------------------
+    Ntriga\PimcoreDeepl\Actions\SyncGlossariesAction:
+        arguments:
+            $localGlossary: '%deepl_glossary%'
+            $sourceLang: '%deepl_source_lang%'
+            $targetLangs: '%deepl_target_langs%'
+
+    Ntriga\PimcoreDeepl\Actions\GetGlossaryNameAction:
+        arguments:
+            $glossaryPrefix: '%deepl_glossary_prefix%'
+
+    Ntriga\PimcoreDeepl\Actions\TranslateEmptyLocalizedFieldsAction:
+        arguments:
+            $sourceLang: '%deepl_source_lang%'
+
+    Ntriga\PimcoreDeepl\Actions\GetGlossariesKeyedByNameAction:
+
+    # ---------------------------------------------------------
+    # Event listeners
+    # ---------------------------------------------------------
+
+    Ntriga\PimcoreDeepl\EventListeners\ObjectTranslationsPreSaveListener:
+        tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: translateEmptyLocalizedFields }
