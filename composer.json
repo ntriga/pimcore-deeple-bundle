@@ -1,6 +1,6 @@
 {
     "name": "ntriga/pimcore-deepl",
-    "version": "11.0.1",
+    "version": "11.0.2",
     "description": "Use Deepl in your Pimcore project to translate documents and objects.",
     "keywords": [
         "ntriga",
