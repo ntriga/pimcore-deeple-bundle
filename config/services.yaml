@@ -55,4 +55,5 @@ services:
 
     Ntriga\PimcoreDeepl\EventListeners\ObjectTranslationsPreSaveListener:
         tags:
+            - { name: kernel.event_listener, event: pimcore.dataobject.preAdd, method: translateEmptyLocalizedFields }
             - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: translateEmptyLocalizedFields }

@@ -2,10 +2,10 @@
 
 namespace Ntriga\PimcoreDeepl\Actions;
 
+use DeepL\DeepLException;
 use DeepL\Translator;
-use Pimcore\Model\DataObject;
+use Exception;
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Tool;
 
 class TranslateEmptyLocalizedFieldsAction
 {
@@ -16,6 +16,10 @@ class TranslateEmptyLocalizedFieldsAction
         private readonly string $sourceLang,
     ){}
 
+    /**
+     * @throws DeepLException
+     * @throws Exception
+     */
     public function __invoke(AbstractObject $object): void
     {
         $localizedFields = $object->getLocalizedfields();
@@ -25,9 +29,10 @@ class TranslateEmptyLocalizedFieldsAction
             return;
         }
 
-        $previousVersion = DataObject::getById($object->getId());
-        $previousLocalizedFields = $previousVersion->getLocalizedfields();
-        $previousItems = $previousLocalizedFields ? $previousLocalizedFields->getItems() : [];
+
+//        $previousVersion = DataObject::getById($object->getId());
+//        $previousLocalizedFields = $previousVersion->getLocalizedfields();
+//        $previousItems = $previousLocalizedFields ? $previousLocalizedFields->getItems() : [];
 
         $glossaries = ($this->getGlossariesKeyedByNameAction)();
 
@@ -42,12 +47,15 @@ class TranslateEmptyLocalizedFieldsAction
 
             foreach( $localizedFieldsItem as $fieldName => $fieldValue ){
                 $defaultLangValue = $localizedFieldsItems[$this->sourceLang][$fieldName];
+
+                if( !$defaultLangValue ){
+                    continue;
+                }
 //                $previousDefaultLangValue = $previousItems[$this->sourceLang][$fieldName] ?? null;
 
                 if( $fieldValue ){
                     continue;
                 }
-
 
                 $translation = $this->translator->translateText(
                     $defaultLangValue,
@@ -55,11 +63,10 @@ class TranslateEmptyLocalizedFieldsAction
                     $localizedFieldsLang,
                     ['glossary' => $glossaryForLang],
                 );
-                $localizedFieldsItems[$localizedFieldsLang][$fieldName] = $translation;
+
+                $object->set($fieldName, $translation->text, $localizedFieldsLang);
+                $localizedFieldsItems[$localizedFieldsLang][$fieldName] = $translation->text;
             }
         }
-
-        $localizedFields->setItems($localizedFieldsItems);
-        $object->setLocalizedfields($localizedFields);
     }
 }

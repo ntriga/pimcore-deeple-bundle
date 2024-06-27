@@ -2,16 +2,21 @@
 
 namespace Ntriga\PimcoreDeepl\EventListeners;
 
+use DeepL\DeepLException;
 use Ntriga\PimcoreDeepl\Actions\TranslateEmptyLocalizedFieldsAction;
 use Pimcore\Event\Model\DataObjectEvent;
 
 class ObjectTranslationsPreSaveListener
 {
     public function __construct(
-        private TranslateEmptyLocalizedFieldsAction $translateEmptyLocalizedFieldsAction,
+        private readonly TranslateEmptyLocalizedFieldsAction $translateEmptyLocalizedFieldsAction,
     ){}
 
-    public function translateEmptyLocalizedFields(DataObjectEvent $event){
+    /**
+     * @throws DeepLException
+     */
+    public function translateEmptyLocalizedFields(DataObjectEvent $event): void
+    {
         $object = $event->getObject();
 
         // Check if the getLocalizedFields method exists
